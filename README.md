@@ -1354,7 +1354,7 @@ By checking the `errorType` and `code` properties of the `APIError` object, you 
 
 ## Changelog / Release Notes
 
-### Version 1.0.2 (April 2, 2025)
+### Version 1.0.4 (April 2, 2025)
 
 - Updated documentation for better clarity and accuracy.
 - No changes to the SDK functionality.
