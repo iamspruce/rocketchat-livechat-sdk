@@ -418,7 +418,9 @@ Register and manage visitors with this endpoints.
     serverURL: "https://chat.example.com",
   });
 
-  const visitorDetails = await sdk.visitor.getVisitor("existing_visitor_token");
+  const visitorDetails = await livechat.visitor.getVisitor(
+    "existing_visitor_token"
+  );
   console.log(visitorDetails);
   ```
 
@@ -467,7 +469,7 @@ Register and manage visitors with this endpoints.
     serverURL: "https://chat.example.com",
   });
 
-  const deletionResponse = await sdk.visitor.deleteVisitor(
+  const deletionResponse = await livechat.visitor.deleteVisitor(
     "visitor_to_delete_token"
   );
   console.log(deletionResponse);
@@ -499,14 +501,6 @@ This group of endpoints allows you to manage rooms.
   - `agentId` (optional, string): The agent ID.
 - **Request Body:** None
 - **Response Format:** `application/json`
-  ```json
-  {
-    "roomId": "room_abc",
-    "status": "open",
-    "participants": ["visitor_token_123", "agent_456"]
-    // ... other room details
-  }
-  ```
 - **Example Request:**
 
   ```typescript
@@ -516,19 +510,22 @@ This group of endpoints allows you to manage rooms.
     serverURL: "https://chat.example.com",
   });
 
-  const roomInfo = await sdk.room.getRoom("visitor_token_123");
+  const roomInfo = await livechat.room.getRoom("visitor_token_123");
   console.log(roomInfo);
 
   // With optional parameters
-  const specificRoom = await sdk.room.getRoom("visitor_token_123", "room_xyz");
-  const roomWithAgent = await sdk.room.getRoom(
+  const specificRoom = await livechat.room.getRoom(
+    "visitor_token_123",
+    "room_id"
+  );
+  const roomWithAgent = await livechat.room.getRoom(
     "visitor_token_456",
     undefined,
     "agent_789"
   );
-  const roomWithAllParams = await sdk.room.getRoom(
+  const roomWithAllParams = await livechat.room.getRoom(
     "visitor_token_012",
-    "room_pqr",
+    "room_id",
     "agent_345"
   );
   ```
@@ -536,9 +533,91 @@ This group of endpoints allows you to manage rooms.
 - **Example Response:**
   ```json
   {
-    "roomId": "room_def",
-    "status": "waiting",
-    "queuePosition": 1
+    "room": {
+      "_id": "kCJDd5peKiZnGJLPq",
+      "fname": "Mary",
+      "t": "l",
+      "v": {
+        "_id": "47Dajwh9DjpnTAugW",
+        "username": "guest-165",
+        "token": "8s7e9ony6ctl27e1qf8kue",
+        "status": "offline",
+        "lastMessageTs": "2021-07-09T20:20:58.755Z"
+      },
+      "departmentId": "CAJioQNAvLnYWTy8i",
+      "default": false,
+      "ro": false,
+      "sysMes": true,
+      "open": true,
+      "msgs": 7,
+      "ts": "2021-07-09T20:12:19.795Z",
+      "_updatedAt": "2021-07-09T20:21:07.334Z",
+      "lm": "2021-07-09T20:20:58.755Z",
+      "customFields": {
+        "salesforceCrmContactId": "0032y000009mtOIAAY"
+      },
+      "usersCount": 2,
+      "cl": false,
+      "departmentAncestors": ["sriw2wmP2Zz2pPrre"],
+      "lastMessage": {
+        "_id": "SgrsSm3HNGrG5xTmk",
+        "rid": "kCJDd5peKiZnGJLPq",
+        "msg": "d",
+        "token": "8s7e9ony6ctl27e1qf8kue",
+        "alias": "Mary",
+        "ts": "2021-07-09T20:20:58.755Z",
+        "u": {
+          "_id": "47Dajwh9DjpnTAugW",
+          "username": "guest-165",
+          "name": "Mary"
+        },
+        "_updatedAt": "2021-07-09T20:20:58.896Z",
+        "urls": [],
+        "mentions": [],
+        "channels": [],
+        "md": [
+          {
+            "type": "PARAGRAPH",
+            "value": [
+              {
+                "type": "PLAIN_TEXT",
+                "value": "d"
+              }
+            ]
+          }
+        ],
+        "newRoom": false,
+        "showConnecting": true
+      },
+      "metrics": {
+        "reaction": {
+          "fd": "2021-07-09T20:19:53.243Z",
+          "ft": 23.821,
+          "tt": 24.006
+        },
+        "response": {
+          "avg": 226.4365,
+          "fd": "2021-07-09T20:19:53.243Z",
+          "ft": 452.688,
+          "total": 2,
+          "tt": 452.873
+        },
+        "v": {
+          "lq": "2021-07-09T20:20:58.755Z"
+        },
+        "servedBy": {
+          "lr": "2021-07-09T20:19:53.077Z"
+        }
+      },
+      "servedBy": {
+        "_id": "XycfA5CetCPuEjqxw",
+        "username": "jane.doe",
+        "ts": "2021-07-09T20:19:29.422Z"
+      },
+      "waitingResponse": true
+    },
+    "newRoom": false,
+    "success": true
   }
   ```
 
@@ -549,6 +628,8 @@ This group of endpoints allows you to manage rooms.
 - **Description:** Close a livechat room.
 - **Request Parameters:** None
 - **Request Body:** `application/json`
+  - `rid` (required, string): The room ID.
+  - `token` (required, string): The visitor token.
   ```json
   {
     "rid": "room_abc",
@@ -556,12 +637,6 @@ This group of endpoints allows you to manage rooms.
   }
   ```
 - **Response Format:** `application/json`
-  ```json
-  {
-    "success": true,
-    "message": "Room closed successfully."
-  }
-  ```
 - **Example Request:**
 
   ```typescript
@@ -571,7 +646,7 @@ This group of endpoints allows you to manage rooms.
     serverURL: "https://chat.example.com",
   });
 
-  const closeResponse = await sdk.room.closeRoom(
+  const closeResponse = await livechat.room.closeRoom(
     "room_abc",
     "visitor_token_123"
   );
@@ -581,6 +656,8 @@ This group of endpoints allows you to manage rooms.
 - **Example Response:**
   ```json
   {
+    "rid": "XFzMqgn33DcsQkpJp",
+    "comment": "Closed by visitor",
     "success": true
   }
   ```
@@ -590,7 +667,10 @@ This group of endpoints allows you to manage rooms.
 - **SDK Method:** `room.submitSurvey(rid: string, token: string, data: Array<{ name: string; value: string }>): Promise<T>`
 - **API:** `POST /room.survey`
 - **Description:** Submit a room survey (feedback).
-- **Request Parameters:** None
+- **Request Parameters:**
+  - `rid` (required, string): The room ID.
+  - `token` (required, string): The visitor token.
+  - `data` (required, array): An array of objects containing survey question names and their corresponding values.
 - **Request Body:** `application/json`
   ```json
   {
@@ -603,12 +683,6 @@ This group of endpoints allows you to manage rooms.
   }
   ```
 - **Response Format:** `application/json`
-  ```json
-  {
-    "success": true,
-    "message": "Survey submitted successfully."
-  }
-  ```
 - **Example Request:**
 
   ```typescript
@@ -622,7 +696,7 @@ This group of endpoints allows you to manage rooms.
     { name: "friendliness", value: "4" },
     { name: "speed", value: "5" },
   ];
-  const surveyResponse = await sdk.room.submitSurvey(
+  const surveyResponse = await livechat.room.submitSurvey(
     "room_def",
     "visitor_token_456",
     surveyData
@@ -631,8 +705,14 @@ This group of endpoints allows you to manage rooms.
   ```
 
 - **Example Response:**
+
   ```json
   {
+    "rid": "room_def",
+    "data": [
+      { "name": "friendliness", "value": "4" },
+      { "name": "speed", "value": "5" }
+    ],
     "success": true
   }
   ```
@@ -649,14 +729,6 @@ This group of endpoints allows you to manage rooms.
   - `description` (optional, string): File description.
 - **Request Body:** `multipart/form-data`
 - **Response Format:** `application/json`
-  ```json
-  {
-    "fileId": "file_123",
-    "name": "document.pdf",
-    "size": 102400,
-    "url": "/uploads/document.pdf"
-  }
-  ```
 - **Example Request:**
 
   ```typescript
@@ -671,7 +743,7 @@ This group of endpoints allows you to manage rooms.
   ) as HTMLInputElement;
   if (fileInput && fileInput.files && fileInput.files.length > 0) {
     const fileToUpload = fileInput.files[0];
-    const uploadResponse = await sdk.room.uploadFile(
+    const uploadResponse = await livechat.room.uploadFile(
       "room_ghi",
       fileToUpload,
       "visitor_token_789",
@@ -684,10 +756,58 @@ This group of endpoints allows you to manage rooms.
 - **Example Response:**
   ```json
   {
-    "fileId": "file_456",
-    "name": "image.png",
-    "size": 51200,
-    "url": "/uploads/image.png"
+    "_id": "CeswhhAKTQMsnEbc8",
+    "rid": "cbjQCtywHbuTYzmLx",
+    "msg": "",
+    "token": "932a1c3019aeeaa9b687bb04b979d",
+    "file": {
+      "_id": "uredcLri4GdehDQnD",
+      "name": "globe.png",
+      "type": "image/png"
+    },
+    "attachments": [
+      {
+        "ts": "1970-01-01T00:00:00.000Z",
+        "title": "globe.png",
+        "title_link": "/file-upload/uredcLri4GdehDQnD/globe.png",
+        "title_link_download": true,
+        "image_dimensions": {
+          "width": 1746,
+          "height": 1624
+        },
+        "image_preview": "/9j/2wBDAAYEBQYFBAYGzMKHSdwCQf2EhyBetVviuOVGrulRJ9NsHpQPgQH/9k=",
+        "image_url": "/file-upload/uredcLri4GdehDQnD/globe.png",
+        "image_type": "image/png",
+        "image_size": 562975,
+        "type": "file",
+        "description": "Here is the file",
+        "descriptionMd": [
+          {
+            "type": "PARAGRAPH",
+            "value": [
+              {
+                "type": "PLAIN_TEXT",
+                "value": "Here is the file"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "alias": "James",
+    "ts": "2023-03-21T16:21:39.131Z",
+    "u": {
+      "_id": "6410766605957d866e0fcf37",
+      "username": "guest-3",
+      "name": "James"
+    },
+    "_updatedAt": "2023-03-21T16:21:39.173Z",
+    "urls": [],
+    "mentions": [],
+    "channels": [],
+    "newRoom": false,
+    "showConnecting": false,
+    "success": true
   }
   ```
 
@@ -702,6 +822,9 @@ This group of endpoints allows you to manage messages.
 - **Description:** Send a new message in a Livechat room.
 - **Request Parameters:** None
 - **Request Body:** `application/json`
+  - `token` (required, string): The visitor token.
+  - `rid` (required, string): The room ID.
+  - `msg` (required, string): The text message.
   ```json
   {
     "token": "visitor_token_123",
@@ -712,15 +835,6 @@ This group of endpoints allows you to manage messages.
   }
   ```
 - **Response Format:** `application/json`
-  ```json
-  {
-    "messageId": "msg_123",
-    "ts": "2025-04-01T10:00:00.000Z",
-    "u": { "_id": "visitor_abc", "username": "visitor1" },
-    "msg": "Hello, how can I help you?"
-    // ... other message details
-  }
-  ```
 - **Example Request:**
 
   ```typescript
@@ -735,7 +849,7 @@ This group of endpoints allows you to manage messages.
     rid: "room_def",
     msg: "I have a question about your product.",
   };
-  const sendMessageResponse = await sdk.messages.sendMessage(
+  const sendMessageResponse = await livechat.messages.sendMessage(
     messageData.token,
     messageData.rid,
     messageData.msg
@@ -746,10 +860,35 @@ This group of endpoints allows you to manage messages.
 - **Example Response:**
   ```json
   {
-    "messageId": "msg_456",
-    "ts": "2025-04-01T10:05:00.000Z",
-    "u": { "_id": "visitor_ghi", "username": "visitor2" },
-    "msg": "I have a question about your product."
+    "message": {
+      "_id": "djsajdkscks787",
+      "rid": "hGFwSKA28nRKut3pD",
+      "msg": "Hello World!",
+      "token": "54fc5544030bcecda053311cb6b98920bdf953f242c129d7b8065000b1f9b2e9",
+      "alias": "Baek",
+      "ts": "2023-10-31T13:14:29.804Z",
+      "u": {
+        "_id": "6523dc0ba2f73c7460e18d4d",
+        "username": "guest-35",
+        "name": "Baek"
+      },
+      "_updatedAt": "2023-10-31T13:14:29.960Z",
+      "urls": [],
+      "mentions": [],
+      "channels": [],
+      "md": [
+        {
+          "type": "PARAGRAPH",
+          "value": [
+            {
+              "type": "PLAIN_TEXT",
+              "value": "Hello World!"
+            }
+          ]
+        }
+      ]
+    },
+    "success": true
   }
   ```
 
@@ -769,14 +908,6 @@ This group of endpoints allows you to manage messages.
   }
   ```
 - **Response Format:** `application/json`
-  ```json
-  {
-    "success": true,
-    "messageId": "msg_123",
-    "msg": "Updated message content"
-    // ... other updated message details
-  }
-  ```
 - **Example Request:**
 
   ```typescript
@@ -786,7 +917,7 @@ This group of endpoints allows you to manage messages.
     serverURL: "https://chat.example.com",
   });
 
-  const updateResponse = await sdk.messages.updateMessage(
+  const updateResponse = await livechat.messages.updateMessage(
     "existing_message_id",
     "visitor_token_789",
     "room_jkl",
@@ -798,9 +929,17 @@ This group of endpoints allows you to manage messages.
 - **Example Response:**
   ```json
   {
-    "success": true,
-    "messageId": "msg_789",
-    "msg": "Actually, I found the answer."
+    "message": {
+      "_id": "ZKWP8LfGnRHQ3ozWa",
+      "msg": "editing livechat message..",
+      "u": {
+        "_id": "YgEoq2djbGdjjZnsL",
+        "username": "guest-4",
+        "name": "Livechat Visitor"
+      },
+      "ls": "2018-09-14T13:31:33.201Z"
+    },
+    "success": true
   }
   ```
 
@@ -815,16 +954,6 @@ This group of endpoints allows you to manage messages.
   - `rid` (required, string): The room ID.
 - **Request Body:** None
 - **Response Format:** `application/json`
-  ```json
-  {
-    "_id": "msg_123",
-    "rid": "room_abc",
-    "u": { "_id": "visitor_abc", "username": "visitor1" },
-    "msg": "Hello, how can I help you?",
-    "ts": "2025-04-01T10:00:00.000Z"
-    // ... other message details
-  }
-  ```
 - **Example Request:**
 
   ```typescript
@@ -834,7 +963,7 @@ This group of endpoints allows you to manage messages.
     serverURL: "https://chat.example.com",
   });
 
-  const messageDetails = await sdk.messages.getMessage(
+  const messageDetails = await livechat.messages.getMessage(
     "existing_message_id",
     "visitor_token_012",
     "room_mno"
@@ -845,11 +974,36 @@ This group of endpoints allows you to manage messages.
 - **Example Response:**
   ```json
   {
-    "_id": "msg_def",
-    "rid": "room_pqr",
-    "u": { "_id": "agent_345", "username": "agent1" },
-    "msg": "Sure, what's your question?",
-    "ts": "2025-04-01T10:02:00.000Z"
+    "message": {
+      "_id": "AgRFdj96mbHDPrTHq",
+      "rid": "mmqCzYgiL8fzRYfuY",
+      "msg": "hi",
+      "token": "8s7e9ony6ctl27e1qf8kue",
+      "alias": "Mary",
+      "ts": "2021-07-13T16:20:26.672Z",
+      "u": {
+        "_id": "47Dajwh9DjpnTAugW",
+        "username": "guest-165",
+        "name": "Mary"
+      },
+      "unread": true,
+      "_updatedAt": "2021-07-13T16:20:26.776Z",
+      "urls": [],
+      "mentions": [],
+      "channels": [],
+      "md": [
+        {
+          "type": "PARAGRAPH",
+          "value": [
+            {
+              "type": "PLAIN_TEXT",
+              "value": "hi"
+            }
+          ]
+        }
+      ]
+    },
+    "success": true
   }
   ```
 
@@ -863,12 +1017,6 @@ This group of endpoints allows you to manage messages.
   - `token` (required, string): The visitor token.
   - `rid` (required, string): The room ID.
 - **Request Body:** `application/json`
-  ```json
-  {
-    "token": "visitor_token_123",
-    "rid": "room_abc"
-  }
-  ```
 - **Response Format:** `application/json`
 - **Example Request:**
 
@@ -879,7 +1027,7 @@ This group of endpoints allows you to manage messages.
     serverURL: "https://chat.example.com",
   });
 
-  const deleteResponse = await sdk.messages.deleteMessage(
+  const deleteResponse = await livechat.messages.deleteMessage(
     "message_to_delete_id",
     "visitor_token_678",
     "room_stu"
@@ -890,6 +1038,10 @@ This group of endpoints allows you to manage messages.
 - **Example Response:**
   ```json
   {
+    "message": {
+      "_id": "ZKWP8LfGnRHQ3ozWa",
+      "ls": "2018-09-14T13:31:33.279Z"
+    },
     "success": true
   }
   ```
@@ -916,21 +1068,21 @@ This group of endpoints allows you to manage messages.
     serverURL: "https://chat.example.com",
   });
 
-  const history = await sdk.messages.getMessageHistory(
+  const history = await livechat.messages.getMessageHistory(
     "room_vwx",
     "visitor_token_901"
   );
   console.log(history);
 
   // With optional parameters
-  const limitedHistory = await sdk.messages.getMessageHistory(
+  const limitedHistory = await livechat.messages.getMessageHistory(
     "room_yz",
     "visitor_token_234",
     undefined,
     undefined,
     10
   );
-  const historySince = await sdk.messages.getMessageHistory(
+  const historySince = await livechat.messages.getMessageHistory(
     "room_abc",
     "visitor_token_567",
     "2025-04-01T08:00:00.000Z"
@@ -939,14 +1091,34 @@ This group of endpoints allows you to manage messages.
 
 - **Example Response:**
   ```json
-  [
-    {
-      "_id": "msg_3",
-      "u": { "_id": "visitor_abc", "username": "visitor1" },
-      "msg": "How can I assist you today?",
-      "ts": "2025-04-01T09:05:00.000Z"
-    }
-  ]
+  {
+    "messages": [
+      {
+        "_id": "ZKWP8LfGnRHQ3ozWa",
+        "rid": "KuACMJ5MpN6SfAFWg",
+        "msg": "editing livechat message..",
+        "token": "iNKE8a6k6cjbqWhWd",
+        "alias": "Livechat Visitor",
+        "ls": "2018-09-14T13:31:33.201Z",
+        "u": {
+          "_id": "YgEoq2djbGdjjZnsL",
+          "username": "guest-4",
+          "name": "Livechat Visitor"
+        },
+        "mentions": [],
+        "channels": [],
+        "_updatedAt": "2018-09-14T13:31:33.222Z",
+        "editedAt": "2018-09-14T13:31:33.219Z",
+        "editedBy": {
+          "_id": "YgEoq2djbGdjjZnsL",
+          "username": "guest-4"
+        },
+        "urls": []
+      }
+    ],
+    "unreadNotLoaded": 0,
+    "success": true
+  }
   ```
 
 #### 5.6 `sendOfflineMessage()`
@@ -956,6 +1128,13 @@ This group of endpoints allows you to manage messages.
 - **Description:** Send an offline message when no agent is available.
 - **Request Parameters:** None
 - **Request Body:** `application/json`
+
+  - `name` (required, string): The name of the visitor.
+  - `email` (required, string): The email address of the visitor.
+  - `message` (required, string): The text message
+  - `department` (required, string): The department to which the visitor belongs.
+  - `host` (required, string): The username of the agent or "null"
+
   ```json
   {
     "name": "John Doe",
@@ -965,6 +1144,7 @@ This group of endpoints allows you to manage messages.
     "host": "support_agent"
   }
   ```
+
 - **Response Format:** `application/json`
 - **Example Request:**
 
@@ -982,7 +1162,7 @@ This group of endpoints allows you to manage messages.
     department: "accounts",
     host: "account_manager",
   };
-  const offlineResponse = await sdk.messages.sendOfflineMessage(
+  const offlineResponse = await livechat.messages.sendOfflineMessage(
     offlineMessageData.name,
     offlineMessageData.email,
     offlineMessageData.message,
@@ -1095,31 +1275,6 @@ try {
 }
 ```
 
-## Changelog / Release Notes
-
-### Version 1.0.0 (April 1, 2025)
-
-**Features:**
-
-- Initial release of the Rocket.Chat Omnichannel Livechat Node.js SDK.
-- Implemented support for the following API endpoints:
-  - Config: `getConfig`
-  - Agents: `getAgentInfo`, `getNextAgent`
-  - Visitor: `registerVisitor`, `getVisitor`, `deleteVisitor`
-  - Room: `getRoom`, `closeRoom`, `submitSurvey`, `uploadFile`
-  - Message: `sendMessage`, `updateMessage`, `getMessage`, `deleteMessage`, `getMessageHistory`, `sendOfflineMessage`
-- Provides a promise-based interface for asynchronous operations.
-- Includes basic error handling within the SDK.
-
-## Glossary
-
-- **Visitor Token:** A unique identifier for a visitor engaging with the livechat. It is used to authenticate and track the visitor across different interactions.
-- **Room ID (rid):** A unique identifier for a specific livechat conversation room.
-- **Agent ID:** A unique identifier for a livechat agent.
-- **Custom Fields:** Additional data associated with a visitor that can be used to provide more context.
-- **Department:** A logical grouping of agents based on their area of expertise.
-- **Message ID (\_id):** A unique identifier for a specific message within a livechat room.
-
 ## Error Handling
 
 The SDK provides a structured way to handle errors that occur during API calls or within the SDK itself. All errors are instances of the `APIError` class, which extends the standard `Error` object and provides additional context.
@@ -1196,3 +1351,51 @@ try {
 ```
 
 By checking the `errorType` and `code` properties of the `APIError` object, you can implement specific error handling logic in your application. For API errors, the `code` will typically correspond to standard HTTP status codes, while SDK errors will have custom codes (though this SDK currently primarily uses HTTP status codes for validation errors).
+
+## Changelog / Release Notes
+
+### Version 1.0.1 (April 2, 2025)
+
+- Updated documentation for better clarity and accuracy.
+- No changes to the SDK functionality.
+
+### Version 1.0.0 (April 1, 2025)
+
+- Initial release of the Rocket.Chat Omnichannel Livechat Node.js SDK.
+- Implemented support for the following API endpoints:
+  - Config: `getConfig`
+  - Agents: `getAgentInfo`, `getNextAgent`
+  - Visitor: `registerVisitor`, `getVisitor`, `deleteVisitor`
+  - Room: `getRoom`, `closeRoom`, `submitSurvey`, `uploadFile`
+  - Message: `sendMessage`, `updateMessage`, `getMessage`, `deleteMessage`, `getMessageHistory`, `sendOfflineMessage`
+- Provides a promise-based interface for asynchronous operations.
+- Includes basic error handling within the SDK.
+
+**Features:**
+
+- Initial release of the Rocket.Chat Omnichannel Livechat Node.js SDK.
+- Implemented support for the following API endpoints:
+  - Config: `getConfig`
+  - Agents: `getAgentInfo`, `getNextAgent`
+  - Visitor: `registerVisitor`, `getVisitor`, `deleteVisitor`
+  - Room: `getRoom`, `closeRoom`, `submitSurvey`, `uploadFile`
+  - Message: `sendMessage`, `updateMessage`, `getMessage`, `deleteMessage`, `getMessageHistory`, `sendOfflineMessage`
+- Provides a promise-based interface for asynchronous operations.
+- Includes basic error handling within the SDK.
+
+## Glossary
+
+- **Visitor Token:** A unique identifier for a visitor engaging with the livechat. It is used to authenticate and track the visitor across different interactions.
+- **Room ID (rid):** A unique identifier for a specific livechat conversation room.
+- **Agent ID:** A unique identifier for a livechat agent.
+- **Custom Fields:** Additional data associated with a visitor that can be used to provide more context.
+- **Department:** A logical grouping of agents based on their area of expertise.
+- **Message ID (\_id):** A unique identifier for a specific message within a livechat room.
+
+## Support and Contact
+
+For support or questions regarding the Rocket.Chat Omnichannel Livechat Node.js SDK, please feel free to open an issue on the GitHub repository: https://github.com/iamspruce/rocketchat-livechat-sdk/issues.
+
+## Contributing
+
+Contributions are welcome! If you'd like to contribute to this project, you can submit pull requests to the repository: https://github.com/iamspruce/rocketchat-livechat-sdk.
